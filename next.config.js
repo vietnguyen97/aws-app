@@ -3,9 +3,6 @@ const dotenv = require("dotenv");
 dotenv.config({
   path: `environments/.env.${process.env.BUILD_ENV} || local}`,
 });
-const nextConfig = {
-  reactStrictMode: true,
-  output: "standalone",
-};
+const nextConfig = {};
 
 module.exports = nextConfig;
