@@ -34,18 +34,31 @@ jobs:
     environment: staging
 
     steps:
+      - name: Get branch names
+        id: branch-name
+        uses: tj-actions/branch-names@v5
+
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+
+      - uses: actions/setup-node@v2
         with:
           node-version: "14.x"
       - name: Install dependencies
         run: yarn install
 
+      - name: Create .env file
+        uses: SpicyPizza/create-envfile@v1
+        with:
+          envkey_SERVER_URL: ${{ secrets.STAGING_SERVER_URL }}
+          directory: environments
+          file_name: .env.staging
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
-      - name: Deploy Next.js app
-        run: npx serverless
+      - name: Start deploying...
+        run: npm install -g serverless@2.72.2
+      - name: Start deploying...
+        run: BUILD_ENV=staging serverless
