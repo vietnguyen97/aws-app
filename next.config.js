@@ -2,9 +2,10 @@ const dotenv = require("dotenv");
 const CircularDependencyPlugin = require("circular-dependency-plugin");
 
 dotenv.config({
-  path: `environments/.env.${process.env.BUILD_ENV} || local}`,
+  path: `environments/.env.staging || local}`,
 });
 
+console.log(`environments/.env.${process.env.BUILD_ENV} || local}`);
 const withPWA = require("next-pwa")({
   dest: "public",
   disable: process.env.NODE_ENV === "development",

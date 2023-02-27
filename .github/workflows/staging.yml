@@ -40,7 +40,7 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v1
         with:
           node-version: "14.x"
       - name: Install dependencies
@@ -61,4 +61,4 @@ jobs:
       - name: Start deploying...
         run: npm install -g serverless@2.72.2
       - name: Start deploying...
-        run: BUILD_ENV=staging serverless
+        run: npx @serverless/cloud deploy prod
