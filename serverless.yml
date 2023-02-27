@@ -1,4 +1,4 @@
 slsNextApp:
-  component: "@sls-next/serverless-component@1.18.0"
+  component: "@sls-next/serverless-component@3.7.0"
   inputs:
-    domain: "devlight.me"
+    domain: "https://www.devlight.me/"

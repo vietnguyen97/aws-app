@@ -31,21 +31,19 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    environment: staging
+    environment:
+      name: Production
+      url: https://www.devlight.me/
 
     steps:
       - name: Get branch names
         id: branch-name
         uses: tj-actions/branch-names@v5
 
-      - uses: actions/checkout@v2
-
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: "14.x"
-      - name: Install dependencies
-        run: yarn install
-
+          node-version: "16.x"
       - name: Create .env file
         uses: SpicyPizza/create-envfile@v1
         with:
@@ -58,7 +56,9 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
+      - run: npm ci
       - name: Start deploying...
-        run: npm install -g serverless@2.72.2
-      - name: Start deploying...
-        run: npx @serverless/cloud deploy prod
+        uses: serverless/github-action@v2
+        with:
+          args: -c "serverless plugin install --name serverless-iam-roles-per-function && serverless deploy --stage production"
+          entrypoint: /bin/sh
