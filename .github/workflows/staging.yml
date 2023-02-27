@@ -63,3 +63,20 @@ jobs:
         with:
           args: -c "serverless plugin install --name serverless-iam-roles-per-function && serverless deploy --stage production"
           entrypoint: /bin/sh
+      - name: Slack Notification
+        id: slack
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          payload: '{"blocks":[{"type":"section","text":{"type":"plain_text","emoji":true,"text":"🚀 Deploy Web Staging SUCCESS 🚀"}},{"type":"divider"},{"type":"section","text":{"type":"mrkdwn","text":"Review website"},"accessory":{"type":"button","text":{"type":"plain_text","text":"View Page","emoji":true},"value":"click_me_123","url":"https://staging.datasean.com","action_id":"button-action"}},{"type":"divider"}]}'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+      - name: Step To run on failure
+        if: ${{ failure() }}
+        uses: slackapi/slack-github-action@v1.16.0
+        with:
+          payload: '{"blocks":[{"type":"section","text":{"type":"mrkdwn","text":"🔥 Deploy Web Staging FAILED, please have a check 🔥"}}]}'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
