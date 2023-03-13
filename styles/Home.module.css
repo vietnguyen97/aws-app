@@ -25,6 +25,17 @@
   gap: 0.5rem;
 }
 
+.description .logout{
+  display: flex;
+}
+
+.description .logout button{
+  outline: none;
+  border: none;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
 .description p {
   position: relative;
   margin: 0;

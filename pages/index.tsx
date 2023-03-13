@@ -2,10 +2,44 @@ import Head from "next/head";
 import Image from "next/image";
 import { Inter } from "next/font/google";
 import styles from "@/styles/Home.module.css";
-
+import { withAuthenticator, WithAuthenticatorProps } from '@aws-amplify/ui-react';
+import {Amplify, API} from 'aws-amplify'
+import '@aws-amplify/ui-react/styles.css';
+import {Auth} from '@aws-amplify/auth'
 const inter = Inter({ subsets: ["latin"] });
 
-export default function Home() {
+interface Props extends WithAuthenticatorProps {
+  isPassedToWithAuthenticator: boolean;
+}
+
+Amplify.configure({
+  aws_project_region: 'ap-southeast-1',
+  aws_cognito_region: 'ap-southeast-1',
+  aws_user_pools_id: 'ap-southeast-1_C7Xa53pBo',
+  aws_user_pools_web_client_id: '5j1s83m3cgojpgrub322dn5b7i',
+  aws_mandatory_sign_in: 'enable',
+  aws_cloud_logic_custom: [
+    {
+      name: 'api-next-app',
+      endpoint: 'https://jjv6sbvk0h.execute-api.ap-southeast-1.amazonaws.com/dev',
+      region: 'ap-southeast-1'
+    }
+  ]
+});
+
+function Home({ isPassedToWithAuthenticator, signOut, user }: Props) {
+  const handleData = async () => {
+    console.log(user)
+    const idToken = (await Auth.currentSession()).getIdToken().getJwtToken()
+    console.log(idToken)
+    const requestHeader = {
+      headers: {
+        Authorization: idToken
+      },
+    };
+    const data = await API.get('api-next-app', '/auth', requestHeader)
+    console.log(data)
+  }
   return (
     <>
       <Head>
@@ -19,8 +53,9 @@ export default function Home() {
           <p>
             Get started by editing&nbsp;
             <code className={styles.code}>pages/index.tsx</code>
+            <button onClick={handleData}>Fetch Data</button>
           </p>
-          <div>
+          <div className={styles.logout}>
             <a
               href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
               target="_blank"
@@ -36,6 +71,9 @@ export default function Home() {
                 priority
               />
             </a>
+            <button onClick={signOut}>
+              logout
+            </button>
           </div>
         </div>
 
@@ -120,4 +158,14 @@ export default function Home() {
       </main>
     </>
   );
+}
+
+export default withAuthenticator(Home);
+
+export async function getStaticProps() {
+  return {
+    props: {
+      isPassedToWithAuthenticator: true,
+    },
+  };
 }
