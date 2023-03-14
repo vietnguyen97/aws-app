@@ -2,10 +2,13 @@ import Head from "next/head";
 import Image from "next/image";
 import { Inter } from "next/font/google";
 import styles from "@/styles/Home.module.css";
-import { withAuthenticator, WithAuthenticatorProps } from '@aws-amplify/ui-react';
-import {Amplify, API} from 'aws-amplify'
-import '@aws-amplify/ui-react/styles.css';
-import {Auth} from '@aws-amplify/auth'
+import {
+  withAuthenticator,
+  WithAuthenticatorProps,
+} from "@aws-amplify/ui-react";
+import { Amplify, API } from "aws-amplify";
+import "@aws-amplify/ui-react/styles.css";
+import { Auth } from "@aws-amplify/auth";
 const inter = Inter({ subsets: ["latin"] });
 
 interface Props extends WithAuthenticatorProps {
@@ -13,33 +16,36 @@ interface Props extends WithAuthenticatorProps {
 }
 
 Amplify.configure({
-  aws_project_region: 'ap-southeast-1',
-  aws_cognito_region: 'ap-southeast-1',
-  aws_user_pools_id: 'ap-southeast-1_C7Xa53pBo',
-  aws_user_pools_web_client_id: '5j1s83m3cgojpgrub322dn5b7i',
-  aws_mandatory_sign_in: 'enable',
+  aws_project_region: "ap-southeast-1",
+  aws_cognito_region: "ap-southeast-1",
+  aws_user_pools_id: "ap-southeast-1_C7Xa53pBo",
+  aws_user_pools_web_client_id: "5j1s83m3cgojpgrub322dn5b7i",
+  aws_mandatory_sign_in: "enable",
   aws_cloud_logic_custom: [
     {
-      name: 'api-next-app',
-      endpoint: 'https://jjv6sbvk0h.execute-api.ap-southeast-1.amazonaws.com/dev',
-      region: 'ap-southeast-1'
-    }
-  ]
+      name: "api-next-app",
+      endpoint:
+        "https://g4z8n3vzxg.execute-api.ap-southeast-1.amazonaws.com/dev",
+      region: "ap-southeast-1",
+    },
+  ],
 });
 
 function Home({ isPassedToWithAuthenticator, signOut, user }: Props) {
   const handleData = async () => {
-    console.log(user)
-    const idToken = (await Auth.currentSession()).getIdToken().getJwtToken()
-    console.log(idToken)
-    const requestHeader = {
-      headers: {
-        Authorization: idToken
-      },
-    };
-    const data = await API.get('api-next-app', '/auth', requestHeader)
-    console.log(data)
-  }
+    try {
+      const idToken = (await Auth.currentSession()).getIdToken().getJwtToken();
+      const requestHeader = {
+        headers: {
+          Authorization: idToken,
+        },
+      };
+      const data = await API.get("api-next-app", "/auth", requestHeader);
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <>
       <Head>
@@ -71,9 +77,7 @@ function Home({ isPassedToWithAuthenticator, signOut, user }: Props) {
                 priority
               />
             </a>
-            <button onClick={signOut}>
-              logout
-            </button>
+            <button onClick={signOut}>logout</button>
           </div>
         </div>
 
